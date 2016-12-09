@@ -6,15 +6,6 @@ import (
 	"net/url"
 )
 
-const (
-	InvalidAuth       = 401
-	ParamError        = 400
-	EndPointError     = 404
-	NotAuthorized     = 403
-	RateLimitExceeded = 403
-	Depreciated       = 200
-)
-
 type ApiError struct {
 	StatusCode int
 	Meta       Meta
@@ -29,6 +20,12 @@ func newApiError(resp *http.Response, meta Meta) *ApiError {
 	}
 }
 
-func (aerr ApiError) Error() string {
-	return fmt.Sprintf("Get %s returned status %d. Code: %d, %s: %s", aerr.Url, aerr.StatusCode, aerr.Meta.Code, aerr.Meta.ErrorDetail, aerr.Meta.ErrorType)
+func (a ApiError) Error() string {
+	return fmt.Sprintf(
+		"Get %s returned status %d. Code: %d, %s: %s",
+		a.Url,
+		a.StatusCode,
+		a.Meta.Code,
+		a.Meta.ErrorDetail,
+		a.Meta.ErrorType)
 }

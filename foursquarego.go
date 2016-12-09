@@ -3,7 +3,6 @@ package foursquarego
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -29,7 +28,7 @@ type response struct {
 	err  error
 }
 
-type Omit struct{}
+type Omit interface{}
 
 const (
 	API_URL = "https://api.foursquare.com/v2/"
@@ -52,7 +51,7 @@ func NewFoursquareApi(clientID string, clientSecret string) *FoursquareApi {
 }
 
 func (a *FoursquareApi) apiGet(urlStr string, form url.Values, data *foursquareResponse) error {
-	req, err := http.NewRequest("GET", urlStr, nil)
+	req, err := http.NewRequest(http.MethodGet, urlStr, nil)
 	if err != nil {
 		return err
 	}
@@ -71,7 +70,10 @@ func (a *FoursquareApi) apiGet(urlStr string, form url.Values, data *foursquareR
 	}
 
 	var apiResp apiResponse
-	json.Unmarshal(contents, &apiResp)
+	if err := json.Unmarshal(contents, &apiResp); err != nil {
+		return err
+	}
+
 	if resp.StatusCode != 200 || apiResp.Meta.Code != 200 {
 		return newApiError(resp, apiResp.Meta)
 	}
@@ -98,22 +100,15 @@ func (a *FoursquareApi) execQuery(urlStr string, form url.Values, data *foursqua
 	case _GET:
 		return a.apiGet(urlStr, form, data)
 	default:
-		return fmt.Errorf("HTTP method not supported")
+		return errors.New("HTTP method not supported")
 	}
 	return errors.New("ack")
 }
 
 func (a *FoursquareApi) throttledQuery() {
 	for q := range a.queryQueue {
-		url := q.url
-		form := q.form
-		data := q.data
-		method := q.method
-
-		response_ch := q.response_ch
-
-		err := a.execQuery(url, form, data, method)
-		response_ch <- response{data, err}
+		err := a.execQuery(q.url, q.form, q.data, q.method)
+		q.response_ch <- response{q.data, err}
 	}
 }
 

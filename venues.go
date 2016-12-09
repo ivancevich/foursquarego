@@ -5,15 +5,14 @@ import (
 	"net/url"
 )
 
-func (a FoursquareApi) GetVenue(id string) (venue Venue, err error) {
+func (a FoursquareApi) GetVenue(id string) (Venue, error) {
 	response_ch := make(chan response)
 	var data foursquareResponse
 	a.queryQueue <- query{API_URL + "venues/" + id, url.Values{}, &data, _GET, response_ch}
 	return data.Venue, (<-response_ch).err
 }
 
-// valid url.Values are: group, limit, offset
-func (a FoursquareApi) GetVenuePhotos(id string, uv url.Values) (photos []Photo, err error) {
+func (a FoursquareApi) GetVenuePhotos(id string, uv url.Values) ([]Photo, error) {
 	uv = cleanValues(uv)
 	response_ch := make(chan response)
 	var data foursquareResponse
@@ -21,16 +20,14 @@ func (a FoursquareApi) GetVenuePhotos(id string, uv url.Values) (photos []Photo,
 	return data.Photos.Items, (<-response_ch).err
 }
 
-func (a FoursquareApi) GetVenueEvents(id string) (events []Event, err error) {
+func (a FoursquareApi) GetVenueEvents(id string) ([]Event, error) {
 	response_ch := make(chan response)
 	var data foursquareResponse
 	a.queryQueue <- query{API_URL + "venues/" + id + "/events", url.Values{}, &data, _GET, response_ch}
 	return data.Events.Items, (<-response_ch).err
 }
 
-// valid url.Values are: limit, offset
-// This is reqlly a swarm endpoint
-func (a FoursquareApi) GetVenueHereNow(id string, uv url.Values) (hereNow HereNow, err error) {
+func (a FoursquareApi) GetVenueHereNow(id string, uv url.Values) (HereNow, error) {
 	uv = cleanValues(uv)
 	if uv.Get("oauth_token") == "" {
 		return HereNow{}, errors.New("Requires Acting User")
@@ -41,29 +38,28 @@ func (a FoursquareApi) GetVenueHereNow(id string, uv url.Values) (hereNow HereNo
 	return data.HereNow, (<-response_ch).err
 }
 
-func (a FoursquareApi) GetVenueHours(id string) (hours HoursResponse, err error) {
+func (a FoursquareApi) GetVenueHours(id string) (HoursResponse, error) {
 	response_ch := make(chan response)
 	var data foursquareResponse
 	a.queryQueue <- query{API_URL + "venues/" + id + "/hours", url.Values{}, &data, _GET, response_ch}
 	return HoursResponse{data.Hours, data.Popular}, (<-response_ch).err
 }
 
-func (a FoursquareApi) GetVenueLikes(id string) (likes LikesResponse, err error) {
+func (a FoursquareApi) GetVenueLikes(id string) (LikesResponse, error) {
 	response_ch := make(chan response)
 	var data foursquareResponse
 	a.queryQueue <- query{API_URL + "venues/" + id + "/likes", url.Values{}, &data, _GET, response_ch}
 	return LikesResponse{data.Likes, data.Like}, (<-response_ch).err
 }
 
-func (a FoursquareApi) GetVenueLinks(id string) (links LinksResponse, err error) {
+func (a FoursquareApi) GetVenueLinks(id string) (LinksResponse, error) {
 	response_ch := make(chan response)
 	var data foursquareResponse
 	a.queryQueue <- query{API_URL + "venues/" + id + "/links", url.Values{}, &data, _GET, response_ch}
 	return data.Links, (<-response_ch).err
 }
 
-// valid url.Values are: group, limit, offset
-func (a FoursquareApi) GetVenueListed(id string, uv url.Values) (lists Listed, err error) {
+func (a FoursquareApi) GetVenueListed(id string, uv url.Values) (Listed, error) {
 	uv = cleanValues(uv)
 	response_ch := make(chan response)
 	var data foursquareResponse
@@ -71,14 +67,14 @@ func (a FoursquareApi) GetVenueListed(id string, uv url.Values) (lists Listed, e
 	return data.Lists, (<-response_ch).err
 }
 
-func (a FoursquareApi) GetVenueMenu(id string) (menu MenuResponse, err error) {
+func (a FoursquareApi) GetVenueMenu(id string) (MenuResponse, error) {
 	response_ch := make(chan response)
 	var data foursquareResponse
 	a.queryQueue <- query{API_URL + "venues/" + id + "/menu", url.Values{}, &data, _GET, response_ch}
 	return data.Menu, (<-response_ch).err
 }
 
-func (a FoursquareApi) GetVenueSimilar(id string, uv url.Values) (venues SimilarVenueResponse, err error) {
+func (a FoursquareApi) GetVenueSimilar(id string, uv url.Values) (SimilarVenueResponse, error) {
 	uv = cleanValues(uv)
 	if uv.Get("oauth_token") == "" {
 		return SimilarVenueResponse{}, errors.New("Requires Acting User")
@@ -89,14 +85,14 @@ func (a FoursquareApi) GetVenueSimilar(id string, uv url.Values) (venues Similar
 	return data.SimilarVenues, (<-response_ch).err
 }
 
-func (a FoursquareApi) GetCategories() (categories []Category, err error) {
+func (a FoursquareApi) GetCategories() ([]Category, error) {
 	response_ch := make(chan response)
 	var data foursquareResponse
 	a.queryQueue <- query{API_URL + "venues/categories", url.Values{}, &data, _GET, response_ch}
 	return data.Categories, (<-response_ch).err
 }
 
-func (a FoursquareApi) Search(uv url.Values) (venues []Venue, err error) {
+func (a FoursquareApi) Search(uv url.Values) ([]Venue, error) {
 	uv = cleanValues(uv)
 	if uv.Get("ll") == "" && uv.Get("near") == "" && uv.Get("intent") != "global" {
 		return []Venue{}, errors.New("ll or near values required")

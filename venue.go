@@ -55,18 +55,18 @@ type Contact struct {
 }
 
 type Location struct {
-	Address          string  `json:"address"`
-	CrossStreet      string  `json:"crossStreet"`
-	Lat              float64 `json:"lat"`
-	Lng              float64 `json:"lng"`
-	Distance         int     `json:"distance"`
-	PostalCode       string  `json:"postalCode"`
-	Cc               string  `json:"cc"`
-	City             string  `json:"city"`
-	State            string  `json:"state"`
-	Country          string  `json:"country"`
-	FormattedAddress string  `json:"formattedAddress"`
-	IsFuzzed         bool    `json:"isFuzzed"`
+	Address          string   `json:"address"`
+	CrossStreet      string   `json:"crossStreet"`
+	Lat              float64  `json:"lat"`
+	Lng              float64  `json:"lng"`
+	Distance         int      `json:"distance"`
+	PostalCode       string   `json:"postalCode"`
+	Cc               string   `json:"cc"`
+	City             string   `json:"city"`
+	State            string   `json:"state"`
+	Country          string   `json:"country"`
+	FormattedAddress []string `json:"formattedAddress"`
+	IsFuzzed         bool     `json:"isFuzzed"`
 }
 
 type Category struct {
@@ -275,21 +275,21 @@ type ListGroup struct {
 }
 
 type List struct {
-	ID            string      `json:"id"`
-	Name          string      `json:"name"`
-	Description   string      `json:"description"`
-	Type          string      `json:"type"`
-	User          User        `json:"user"`
-	Editable      bool        `json:"editable"`
-	Public        bool        `json:"public"`
-	Collaborative bool        `json:"collaborative"`
-	Url           string      `json:"url"`
-	CanonicalUrl  string      `json:"canonicalUrl"`
-	CreatedAt     int         `json:"createdAt"`
-	UpdatedAt     int         `json:"updatedAt"`
-	Photo         Photo       `json:"photo"`
-	Followers     Followers   `json:"followers"`
-	ListItems     []ListItems `json:"listItems"`
+	ID            string    `json:"id"`
+	Name          string    `json:"name"`
+	Description   string    `json:"description"`
+	Type          string    `json:"type"`
+	User          User      `json:"user"`
+	Editable      bool      `json:"editable"`
+	Public        bool      `json:"public"`
+	Collaborative bool      `json:"collaborative"`
+	Url           string    `json:"url"`
+	CanonicalUrl  string    `json:"canonicalUrl"`
+	CreatedAt     int       `json:"createdAt"`
+	UpdatedAt     int       `json:"updatedAt"`
+	Photo         Photo     `json:"photo"`
+	Followers     Followers `json:"followers"`
+	ListItems     ListItems `json:"listItems"`
 }
 
 type Followers struct {
@@ -315,14 +315,14 @@ type Phrase struct {
 }
 
 type Sample struct {
-	Entities []Entitie `json:"entities"`
-	Text     string    `json:"text"`
-	Count    int       `json:"count"`
+	Entities []Entity `json:"entities"`
+	Text     string   `json:"text"`
+	Count    int      `json:"count"`
 }
 
-type Entitie struct {
-	Indicies []int  `json:"indicies"`
-	Type     string `json:"type"`
+type Entity struct {
+	Indices []int  `json:"indices"`
+	Type    string `json:"type"`
 }
 
 type HoursVenue struct {
@@ -350,7 +350,7 @@ type TimeFrameHours struct {
 	Days          []int  `json:"days"`
 	IncludesToday bool   `json:"includesToday"`
 	Open          []Open `json:"open"`
-	Segements     Omit   `json:"-"`
+	Segments      Omit   `json:"-"`
 }
 
 type Open struct {
